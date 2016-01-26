@@ -35,4 +35,12 @@ namespace Util {
 
         return buf;
     }
+
+    void printHeader() {
+        // print opengl version
+        printf("OpenGL version supported by this platform (%s): \n", glGetString(GL_VERSION));
+        char resolved_path[512];
+        realpath(".", resolved_path);
+        printf("CWD: %s\n", resolved_path);
+    }
 }

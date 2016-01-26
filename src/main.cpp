@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <SOIL.h>
+#include <thread>
+#include <cmath>
 #include "shader.h"
+#include "util.h"
 
 // The error callback will just print any errors that GLFW hits.
 void error_callback(int error, const char* description) {
@@ -40,9 +44,9 @@ int main() {
     glfwSetErrorCallback(error_callback);
 
     // Set up OpenGL options.
-    // Use OpenGL verion 4.1,
+    // Use OpenGL verion 3.3,
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     // GLFW_OPENGL_FORWARD_COMPAT specifies whether the OpenGL context should be forward-compatible,
     // i.e. one where all functionality deprecated in the requested version of OpenGL is removed.
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -73,14 +77,16 @@ int main() {
     glewInit();
     printf("Inited GLEW\n");
 
-    // print opengl version
-    printf("OpenGL version supported by this platform (%s): \n", glGetString(GL_VERSION));
-    char resolved_path[256];
-    realpath(".", resolved_path);
-    printf("CWD: %s\n", resolved_path);
+    // print header
+    Util::printHeader();
+
     // get shaders
     GL::Shader vs = GL::Shader(GL_FRAGMENT_SHADER, (char*)"assets/shaders/fragment/standard.frag");
     GL::Shader fs = GL::Shader(GL_VERTEX_SHADER, (char*)"assets/shaders/vertex/standard.vert");
+
+    // generate vertex arrays
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     // create program
     program = glCreateProgram();
@@ -92,23 +98,51 @@ int main() {
     // link the program
     glLinkProgram(program);
 
-    // generate vertex arrays
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    // load vertex data
+    float vertices[] = {0.25, -0.25, 0.5,
+                        -0.25, -0.25, 0.5,
+                        -0.25, 0.25, 0.5,
+                         0.25, 0.25, 0.5};
+    // create the vertex and element buffers
+    GLuint vbo, ebo;
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
+
+    // create position's attrib pointer and buffer data to it's
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    GLint posAttrib = glGetAttribLocation(program, "position");
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posAttrib);
+
+    // create the elements
+    GLuint elements[] = { 0, 1, 2,
+                          0, 2, 3 };
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
     // use opengl program
     glUseProgram(program);
 
+    // get triangleColor uniform
+    GLint uniColor = glGetUniformLocation(program, "triangleColor");
+
     // render loop
+    auto t_start = std::chrono::high_resolution_clock::now();
     while (!glfwWindowShouldClose(window)) {
-        // Set up our green background color
-        static const GLfloat green[] = { 0.0f, 0.25f, 0.0f, 1.0f };
+        // get time
+        auto t_now = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+        glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, (sin(time * 4.0 + 3.0) + 1.0) / 2.0f, 0.0);
+
+        // Set up our black background color
+        static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
         // Clear the entire buffer with our green color (sets the background to be green).
-        glClearBufferfv(GL_COLOR, 0, green);
+        glClearBufferfv(GL_COLOR, 0, black);
 
         // Draw our triangles
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
