@@ -1,4 +1,4 @@
-tests_opengl
+glfw_test
 ============
 
 Just a small program to test glfw/opengl using C++.
