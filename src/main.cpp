@@ -20,15 +20,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
-void err_exit(const char* desc, bool glfwDestroy) {
-    fputs(desc, stderr);
-    fputs("\n", stderr);
-    if (glfwDestroy) {
-        glfwTerminate();
-    }
-    exit(EXIT_FAILURE);
-}
-
 // globals
 GLuint program, vao;
 int main() {
@@ -37,7 +28,7 @@ int main() {
 
     // init glfw, check if fail
     if (!glfwInit()) {
-        err_exit("Failed to init GLFW, exiting.\n", false);
+        Util::err_exit("Failed to init GLFW, exiting.\n", false);
     } else printf("Inited GLFW\n");
 
     // set error callback
@@ -63,7 +54,7 @@ int main() {
     // window failed to be created
     if (!window) {
         // exit with error
-        err_exit("Failed to create GLFW window.", true);
+        Util::err_exit("Failed to create GLFW window.", true);
     }
 
     // use this window as the default context

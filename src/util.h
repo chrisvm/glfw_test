@@ -12,6 +12,7 @@
 namespace Util {
     char* fileToBuffer(char *file);
     void printHeader();
+    void err_exit(const char* desc, bool glfwDestroy);
     // TODO: implement this method
     //void loadImage(const char* img_path, unsigned char* )
 };

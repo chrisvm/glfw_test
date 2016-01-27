@@ -43,4 +43,13 @@ namespace Util {
         realpath(".", resolved_path);
         printf("CWD: %s\n", resolved_path);
     }
+
+    void err_exit(const char* desc, bool glfwDestroy) {
+        fputs(desc, stderr);
+        fputs("\n", stderr);
+        if (glfwDestroy) {
+            glfwTerminate();
+        }
+        exit(EXIT_FAILURE);
+    }
 }
