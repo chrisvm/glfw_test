@@ -8,13 +8,22 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <SOIL.h>
 
 namespace Util {
+    struct SOILImage {
+        int width, height;
+        unsigned char* image;
+
+        void free() {
+            SOIL_free_image_data(this->image);
+        }
+    };
+
     char* fileToBuffer(char *file);
     void printHeader();
     void err_exit(const char* desc, bool glfwDestroy);
-    // TODO: implement this method
-    //void loadImage(const char* img_path, unsigned char* )
+    SOILImage* loadImage(const char* img_path);
 };
 
 

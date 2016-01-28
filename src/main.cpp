@@ -90,21 +90,23 @@ int main() {
     glLinkProgram(program);
 
     // load vertex data
-    float vertices[] = {0.25, -0.25, 0.5,
+    float vertices[] = { 0.25, -0.25, 0.5,
                         -0.25, -0.25, 0.5,
-                        -0.25, 0.25, 0.5,
-                         0.25, 0.25, 0.5};
+                        -0.25,  0.25, 0.5,
+                         0.25,  0.25, 0.5 };
     // create the vertex and element buffers
     GLuint vbo, ebo;
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
 
-    // create position's attrib pointer and buffer data to it's
+    // create position's attrib pointer and buffer data to it's vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     GLint posAttrib = glGetAttribLocation(program, "position");
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
     glEnableVertexAttribArray(posAttrib);
+    GLint colorAttrib = glGetAttribLocation(program, "vColor");
+    glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     // create the elements
     GLuint elements[] = { 0, 1, 2,
@@ -117,6 +119,8 @@ int main() {
 
     // get triangleColor uniform
     GLint uniColor = glGetUniformLocation(program, "triangleColor");
+
+    // create texture
 
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
