@@ -71,10 +71,6 @@ int main() {
     // print header
     Util::printHeader();
 
-    // get shaders
-    GL::Shader vs = GL::Shader(GL_FRAGMENT_SHADER, (char*)"assets/shaders/fragment/standard.frag");
-    GL::Shader fs = GL::Shader(GL_VERTEX_SHADER, (char*)"assets/shaders/vertex/standard.vert");
-
     // generate vertex arrays
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -82,18 +78,22 @@ int main() {
     // create program
     program = glCreateProgram();
 
-    // attach shaders
+    // attach and create shaders
+    GL::Shader vs = GL::Shader(GL_FRAGMENT_SHADER, (char*)"assets/shaders/fragment/standard.frag");
+    GL::Shader fs = GL::Shader(GL_VERTEX_SHADER, (char*)"assets/shaders/vertex/standard.vert");
     vs.attachTo(program);
     fs.attachTo(program);
+    printf("Shader compilation was successful\n");
 
     // link the program
     glLinkProgram(program);
 
     // load vertex data
-    float vertices[] = { 0.25, -0.25, 0.5,
-                        -0.25, -0.25, 0.5,
-                        -0.25,  0.25, 0.5,
-                         0.25,  0.25, 0.5 };
+    float vertices[] = { 0.25, -0.25, 0.5, 1.0, 0.0, 0.0,
+                        -0.25, -0.25, 0.5, 0.0, 1.0, 0.0,
+                        -0.25,  0.25, 0.5, 0.0, 0.0, 1.0,
+                         0.25,  0.25, 0.5, 1.0, 1.0, 1.0 };
+
     // create the vertex and element buffers
     GLuint vbo, ebo;
     glGenBuffers(1, &vbo);
@@ -102,11 +102,14 @@ int main() {
     // create position's attrib pointer and buffer data to it's vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
     GLint posAttrib = glGetAttribLocation(program, "position");
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
     glEnableVertexAttribArray(posAttrib);
-    GLint colorAttrib = glGetAttribLocation(program, "vColor");
+
+    GLint colorAttrib = glGetAttribLocation(program, "color");
     glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(colorAttrib);
 
     // create the elements
     GLuint elements[] = { 0, 1, 2,
@@ -117,9 +120,6 @@ int main() {
     // use opengl program
     glUseProgram(program);
 
-    // get triangleColor uniform
-    GLint uniColor = glGetUniformLocation(program, "triangleColor");
-
     // create texture
 
     // render loop
@@ -128,7 +128,6 @@ int main() {
         // get time
         auto t_now = std::chrono::high_resolution_clock::now();
         float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-        glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, (sin(time * 4.0 + 3.0) + 1.0) / 2.0f, 0.0);
 
         // Set up our black background color
         static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };

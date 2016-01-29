@@ -5,7 +5,7 @@
 #ifndef GLFW_TEST_SHADER_H
 #define GLFW_TEST_SHADER_H
 #include <GL/glew.h>
-#include "Util.h"
+#include "util.h"
 
 namespace GL {
     class Shader {
