@@ -1,24 +1,13 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <thread>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <SOIL.h>
-#include <thread>
-#include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "shader.h"
-#include "util.h"
-
-// The error callback will just print any errors that GLFW hits.
-void error_callback(int error, const char* description) {
-    fprintf(stderr, "Error: %u\n%s\n", error, description);
-}
-
-// The key callback generally handles any input, but we'll just use the ESC key in this example.
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-}
+#include "callbacks.h"
 
 // globals
 GLuint program, vao;
@@ -32,7 +21,7 @@ int main() {
     } else printf("Inited GLFW\n");
 
     // set error callback
-    glfwSetErrorCallback(error_callback);
+    glfwSetErrorCallback(Callbacks::error_callback);
 
     // Set up OpenGL options.
     // Use OpenGL verion 3.3,
@@ -61,7 +50,7 @@ int main() {
     glfwMakeContextCurrent(window);
 
     // set keyboard callback
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, Callbacks::key_callback);
 
     // init glew with all extensions
     glewExperimental = GL_TRUE;
@@ -70,6 +59,7 @@ int main() {
 
     // print header
     Util::printHeader();
+    glEnable(GL_DEPTH_TEST);
 
     // generate vertex arrays
     glGenVertexArrays(1, &vao);
@@ -90,16 +80,21 @@ int main() {
 
     // load vertex data
     // composition: posx, posy, posz, rcolor, gcolor, bcolor, txcoordx, txcoordy
-//    float vertices[] = { 0.25, -0.25, 0.5, 1.0, 0.0, 0.0, 0.0, 0.0,
-//                        -0.25, -0.25, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
-//                        -0.25,  0.25, 0.5, 0.0, 0.0, 1.0, 1.0, 1.0,
-//                         0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 1.0 };
-    float vertices[] = { 0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-                         -0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-                         -0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-                         0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 1.0 };
+    float vertices[] = {
+             0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+            -0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+            -0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+             0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+
+             0.25, -0.25, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+            -0.25, -0.25, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0,
+            -0.25,  0.25, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0,
+             0.25,  0.25, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+
+    };
     // create texture
     GLuint tex;
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
 
@@ -125,8 +120,19 @@ int main() {
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
     // create the elements
-    GLuint elements[] = { 0, 1, 2,
-                          0, 2, 3 };
+    GLuint elements[] = {
+            0, 1, 2,
+            0, 2, 3,
+
+            0, 1, 4,
+            1, 4, 5,
+
+            3, 2, 7,
+            2, 7, 6,
+
+            1, 2, 6,
+            1, 6, 5
+    };
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
@@ -134,10 +140,11 @@ int main() {
     glUseProgram(program);
 
     // get texture and load to gpu
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
     char const * textPath = "assets/images/normals/crystalite_color.jpg";
     Util::SOILImage* img = Util::loadImage(textPath);
     if (img == NULL) {
@@ -148,21 +155,65 @@ int main() {
         img->free();
     }
 
+    // get model transform uniform
+    GLint uniModelTrans = glGetUniformLocation(program, "model");
+    GLint uniViewTrans = glGetUniformLocation(program, "view");
+    GLint uniProjTrans = glGetUniformLocation(program, "proj");
+
+    // create matrix
+    glm::mat4 modelTrans, viewTrans, projTrans;
+    glm::vec3 cameraPos(1.2f, 1.2f, 1.2f);
+
+    // 3d projection
+    projTrans = glm::perspective(glm::radians(70.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+    glUniformMatrix4fv(uniProjTrans, 1, GL_FALSE, glm::value_ptr(projTrans));
+
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
     while (!glfwWindowShouldClose(window)) {
         // get time
         auto t_now = std::chrono::high_resolution_clock::now();
         float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+        t_start = t_now;
+
+        // rotate
+        modelTrans = glm::rotate(
+                modelTrans,
+                glm::radians(45.0f) * time,
+                glm::vec3(0.0f, 0.0f, 1.0f)
+        );
+        glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
+
+        // check key presses
+        if (Callbacks::getKey(GLFW_KEY_A)) {
+            cameraPos.y += -0.1f;
+        }
+        if (Callbacks::getKey(GLFW_KEY_D)) {
+            cameraPos.y +=  0.1f;
+        }
+        if (Callbacks::getKey(GLFW_KEY_W)) {
+            cameraPos.x += -0.1f;
+        }
+        if (Callbacks::getKey(GLFW_KEY_S)) {
+            cameraPos.x +=  0.1f;
+        }
+
+        // camera view
+        viewTrans = glm::lookAt(
+                cameraPos,
+                glm::vec3(0.0f, 0.0f, 0.0f),
+                glm::vec3(0.0f, 0.0f, 1.0f)
+        );
+        glUniformMatrix4fv(uniViewTrans, 1, GL_FALSE, glm::value_ptr(viewTrans));
 
         // Set up our black background color
         static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
         // Clear the entire buffer with our green color (sets the background to be green).
-        glClearBufferfv(GL_COLOR, 0, black);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Draw our triangles
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(elements), GL_UNSIGNED_INT, 0);
 
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);

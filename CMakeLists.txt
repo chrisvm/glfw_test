@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(glfw_test CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(program_SOURCES "src/main.cpp" "src/shader.cpp" "src/util.cpp")
+set(program_SOURCES "src/main.cpp" "src/shader.cpp" "src/util.cpp" "src/callbacks.cpp")
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
@@ -20,8 +20,10 @@ include_directories("/usr/local/include")
 include_directories("/opt/local/include/SOIL")
 include_directories("/usr/local/Cellar/glfw3/3.1.2/include")
 include_directories("/usr/local/Cellar/glew/1.13.0/include")
+include_directories("/usr/local/Cellar/glm/0.9.7.1/include")
 
-link_directories("/usr/local/Cellar/glew/1.13.0/lib" "/usr/local/Cellar/glfw3/3.1.2/lib" "/usr/local/lib")
+link_directories("/usr/local/Cellar/glew/1.13.0/lib")
+link_directories("/usr/local/Cellar/glfw3/3.1.2/lib")
 link_directories("/opt/local/lib")
 
 # find opengl framework
@@ -29,4 +31,4 @@ find_library(OPENGL OpenGL)
 set(LIBS ${LIBS} ${OPENGL} glfw3 glew soil)
 
 add_executable(main ${program_SOURCES})
-target_link_libraries(main ${OPENGL} ${LIBS})
+target_link_libraries(main ${LIBS})
