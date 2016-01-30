@@ -5,7 +5,7 @@
 #include "util.h"
 
 namespace Util {
-    char* fileToBuffer(char *file) {
+    char* fileToBuffer(char const * file) {
         FILE *fptr;
         long length;
         char *buf;
@@ -54,7 +54,12 @@ namespace Util {
 
     SOILImage* loadImage(const char* img_path) {
         SOILImage *ret = new SOILImage();
-        ret->image = SOIL_load_image("img.png", &ret->width, &ret->height, 0, SOIL_LOAD_RGB);
+        ret->path = img_path;
+        ret->image = SOIL_load_image(img_path, &ret->width, &ret->height, 0, SOIL_LOAD_RGB);
+        if (ret->image == NULL) {
+            delete ret;
+            return NULL;
+        }
         return ret;
     }
 }

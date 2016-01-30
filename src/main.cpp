@@ -79,8 +79,8 @@ int main() {
     program = glCreateProgram();
 
     // attach and create shaders
-    GL::Shader vs = GL::Shader(GL_FRAGMENT_SHADER, (char*)"assets/shaders/fragment/standard.frag");
-    GL::Shader fs = GL::Shader(GL_VERTEX_SHADER, (char*)"assets/shaders/vertex/standard.vert");
+    GL::Shader vs = GL::Shader(GL_FRAGMENT_SHADER, "assets/shaders/fragment/standard.frag");
+    GL::Shader fs = GL::Shader(GL_VERTEX_SHADER, "assets/shaders/vertex/standard.vert");
     vs.attachTo(program);
     fs.attachTo(program);
     printf("Shader compilation was successful\n");
@@ -89,10 +89,19 @@ int main() {
     glLinkProgram(program);
 
     // load vertex data
-    float vertices[] = { 0.25, -0.25, 0.5, 1.0, 0.0, 0.0,
-                        -0.25, -0.25, 0.5, 0.0, 1.0, 0.0,
-                        -0.25,  0.25, 0.5, 0.0, 0.0, 1.0,
-                         0.25,  0.25, 0.5, 1.0, 1.0, 1.0 };
+    // composition: posx, posy, posz, rcolor, gcolor, bcolor, txcoordx, txcoordy
+//    float vertices[] = { 0.25, -0.25, 0.5, 1.0, 0.0, 0.0, 0.0, 0.0,
+//                        -0.25, -0.25, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
+//                        -0.25,  0.25, 0.5, 0.0, 0.0, 1.0, 1.0, 1.0,
+//                         0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 1.0 };
+    float vertices[] = { 0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
+                         -0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
+                         -0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
+                         0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 1.0 };
+    // create texture
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
 
     // create the vertex and element buffers
     GLuint vbo, ebo;
@@ -104,12 +113,16 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     GLint posAttrib = glGetAttribLocation(program, "position");
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
     glEnableVertexAttribArray(posAttrib);
 
     GLint colorAttrib = glGetAttribLocation(program, "color");
-    glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(colorAttrib);
+
+    GLint texAttrib = glGetAttribLocation(program, "texcoord");
+    glEnableVertexAttribArray(texAttrib);
+    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
     // create the elements
     GLuint elements[] = { 0, 1, 2,
@@ -120,7 +133,20 @@ int main() {
     // use opengl program
     glUseProgram(program);
 
-    // create texture
+    // get texture and load to gpu
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    char const * textPath = "assets/images/normals/crystalite_color.jpg";
+    Util::SOILImage* img = Util::loadImage(textPath);
+    if (img == NULL) {
+        printf("Error loading texture \"%s\"\n", textPath);
+    } else {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img->width, img->height, 0, GL_RGB, GL_UNSIGNED_BYTE, img->image);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        img->free();
+    }
 
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();

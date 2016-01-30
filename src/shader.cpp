@@ -2,7 +2,7 @@
 
 namespace GL {
     // Public
-    Shader::Shader(GLenum type, char* location) {
+    Shader::Shader(GLenum type, char const * location) {
         _handle = glCreateShader(type);
 
         GLchar* src = Util::fileToBuffer(location);
@@ -41,7 +41,7 @@ namespace GL {
     // END Public
 
     // Private
-    void Shader::logError(char* location) {
+    void Shader::logError(char const * location) {
         GLint infoLogLength;
         glGetShaderiv(_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
 
