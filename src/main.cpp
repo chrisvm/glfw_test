@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "shader.h"
 #include "callbacks.h"
+#include "camera.h"
 
 // globals
 GLuint program, vao;
@@ -60,6 +61,7 @@ int main() {
     // print header
     Util::printHeader();
     glEnable(GL_DEPTH_TEST);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     // generate vertex arrays
     glGenVertexArrays(1, &vao);
@@ -91,7 +93,13 @@ int main() {
             -0.25,  0.25, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0,
              0.25,  0.25, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,
 
+             0.50, -0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            -0.50, -0.50, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+            -0.50,  0.50, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0,
+             0.50,  0.50, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0
+
     };
+
     // create texture
     GLuint tex;
     glActiveTexture(GL_TEXTURE0);
@@ -121,6 +129,7 @@ int main() {
 
     // create the elements
     GLuint elements[] = {
+
             0, 1, 2,
             0, 2, 3,
 
@@ -131,7 +140,13 @@ int main() {
             2, 7, 6,
 
             1, 2, 6,
-            1, 6, 5
+            1, 6, 5,
+
+            0, 3, 7,
+            0, 7, 4,
+
+            8, 9, 10,
+            8, 10, 11,
     };
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
@@ -160,13 +175,11 @@ int main() {
     GLint uniViewTrans = glGetUniformLocation(program, "view");
     GLint uniProjTrans = glGetUniformLocation(program, "proj");
 
-    // create matrix
-    glm::mat4 modelTrans, viewTrans, projTrans;
-    glm::vec3 cameraPos(1.2f, 1.2f, 1.2f);
+    // create model transformation matrix
+    glm::mat4 modelTrans;
 
-    // 3d projection
-    projTrans = glm::perspective(glm::radians(70.0f), 800.0f / 600.0f, 1.0f, 10.0f);
-    glUniformMatrix4fv(uniProjTrans, 1, GL_FALSE, glm::value_ptr(projTrans));
+    // create camera
+    Camera::Camera * camera = new Camera::Camera(uniViewTrans, uniProjTrans);
 
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
@@ -176,44 +189,58 @@ int main() {
         float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
         t_start = t_now;
 
-        // rotate
+
+        // check key presses
+        if (Callbacks::getKey(GLFW_KEY_A)) {
+            camera->pos.y += -0.1f;
+        }
+        if (Callbacks::getKey(GLFW_KEY_D)) {
+            camera->pos.y +=  0.1f;
+        }
+        if (Callbacks::getKey(GLFW_KEY_W)) {
+            camera->pos.x += -0.1f;
+        }
+        if (Callbacks::getKey(GLFW_KEY_S)) {
+            camera->pos.x +=  0.1f;
+        }
+
+        // camera view
+        camera->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
+
+        // Clear the entire buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        // draw Cube
         modelTrans = glm::rotate(
                 modelTrans,
                 glm::radians(45.0f) * time,
                 glm::vec3(0.0f, 0.0f, 1.0f)
         );
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
+        glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
 
-        // check key presses
-        if (Callbacks::getKey(GLFW_KEY_A)) {
-            cameraPos.y += -0.1f;
-        }
-        if (Callbacks::getKey(GLFW_KEY_D)) {
-            cameraPos.y +=  0.1f;
-        }
-        if (Callbacks::getKey(GLFW_KEY_W)) {
-            cameraPos.x += -0.1f;
-        }
-        if (Callbacks::getKey(GLFW_KEY_S)) {
-            cameraPos.x +=  0.1f;
-        }
+        glEnable(GL_STENCIL_TEST);
 
-        // camera view
-        viewTrans = glm::lookAt(
-                cameraPos,
-                glm::vec3(0.0f, 0.0f, 0.0f),
-                glm::vec3(0.0f, 0.0f, 1.0f)
+        // draw floor
+        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glStencilMask(0xFF); // Write to stencil buffer
+        glDepthMask(GL_FALSE); // Don't write to depth buffer
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void *) 30);
+
+        // draw reflection
+        modelTrans = glm::scale(
+                glm::translate(modelTrans, glm::vec3(0, 0, 0)),
+                glm::vec3(1, 1, -1)
         );
-        glUniformMatrix4fv(uniViewTrans, 1, GL_FALSE, glm::value_ptr(viewTrans));
+        glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
+        glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+        glStencilMask(0x00); // Don't write anything to stencil buffer
+        glDepthMask(GL_TRUE); // Write to depth buffer
+        glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
 
-        // Set up our black background color
-        static const GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-
-        // Clear the entire buffer with our green color (sets the background to be green).
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Draw our triangles
-        glDrawElements(GL_TRIANGLES, sizeof(elements), GL_UNSIGNED_INT, 0);
+        glDisable(GL_STENCIL_TEST);
 
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
