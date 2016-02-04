@@ -146,7 +146,7 @@ int main() {
             0, 7, 4,
 
             8, 9, 10,
-            8, 10, 11,
+            8, 10, 11
     };
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
@@ -209,7 +209,7 @@ int main() {
 
 
         // Clear the entire buffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw Cube
         modelTrans = glm::rotate(
@@ -218,10 +218,10 @@ int main() {
                 glm::vec3(0.0f, 0.0f, 1.0f)
         );
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
-        glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         // draw floor
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void *) 30);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (int*)30);
 
         // draw reflection
         modelTrans = glm::scale(
