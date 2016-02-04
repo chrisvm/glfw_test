@@ -220,13 +220,7 @@ int main() {
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
         glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
 
-        glEnable(GL_STENCIL_TEST);
-
         // draw floor
-        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glStencilMask(0xFF); // Write to stencil buffer
-        glDepthMask(GL_FALSE); // Don't write to depth buffer
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void *) 30);
 
         // draw reflection
@@ -235,12 +229,7 @@ int main() {
                 glm::vec3(1, 1, -1)
         );
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
-        glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
-        glStencilMask(0x00); // Don't write anything to stencil buffer
-        glDepthMask(GL_TRUE); // Write to depth buffer
         glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
-
-        glDisable(GL_STENCIL_TEST);
 
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
