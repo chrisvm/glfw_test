@@ -54,7 +54,8 @@ int main() {
     // set keyboard callback
     glfwSetKeyCallback(window, Callbacks::key_callback);
     glfwSetCursorPosCallback(window, Callbacks::mouse_callback);
-
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    
     // init glew with all extensions
     glewExperimental = GL_TRUE;
     glewInit();
@@ -190,10 +191,12 @@ int main() {
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(uniViewTrans, uniProjTrans);
+    glm::vec2 last_mouse = Callbacks::getMouse();
 
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
     while (!glfwWindowShouldClose(window)) {
+
         // get time
         auto t_now = std::chrono::high_resolution_clock::now();
         float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
@@ -213,6 +216,11 @@ int main() {
         if (Callbacks::getKey(GLFW_KEY_S)) {
             camera->pos.x +=  0.1f;
         }
+
+        // update mouse
+        glm::vec2 mouse = Callbacks::getMouse();
+        double deltaX = mouse.x - last_mouse.x, deltaY = mouse.y - last_mouse.y;
+        camera->rot += glm::vec2(deltaX, deltaY);
 
         // camera view
         camera->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
