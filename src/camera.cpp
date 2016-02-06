@@ -12,7 +12,7 @@ namespace Camera {
     }
 
     void Camera::configure() {
-        this->projTrans = glm::perspective(glm::radians(70.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+        this->projTrans = glm::perspectiveFov(glm::radians(70.0f), 800.0f, 600.0f, 1.0f, 10.0f);
         glUniformMatrix4fv(this->projUniform, 1, GL_FALSE, glm::value_ptr(this->projTrans));
 
         this->pos = glm::vec3(1.2f, 1.2f, 1.2f);

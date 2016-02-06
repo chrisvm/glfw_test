@@ -1,3 +1,4 @@
+#define BUFFER_OFFSET(i) ((void*)(i))
 #include <stdio.h>
 #include <cmath>
 #include <thread>
@@ -52,6 +53,7 @@ int main() {
 
     // set keyboard callback
     glfwSetKeyCallback(window, Callbacks::key_callback);
+    glfwSetCursorPosCallback(window, Callbacks::mouse_callback);
 
     // init glew with all extensions
     glewExperimental = GL_TRUE;
@@ -82,23 +84,64 @@ int main() {
 
     // load vertex data
     // composition: posx, posy, posz, rcolor, gcolor, bcolor, txcoordx, txcoordy
-    float vertices[] = {
-             0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 0.0,
-            -0.25, -0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 0.0,
-            -0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0,
-             0.25,  0.25, 0.5, 1.0, 1.0, 1.0, 0.0, 1.0,
+    GLfloat vertices[] = {
+            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
 
-             0.25, -0.25, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-            -0.25, -0.25, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0,
-            -0.25,  0.25, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0,
-             0.25,  0.25, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
 
-             0.50, -0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-            -0.50, -0.50, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-            -0.50,  0.50, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0,
-             0.50,  0.50, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0
+            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
 
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+
+            -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
     };
+
+    // create the vertex bufffer
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+
+    // create position's attrib pointer and buffer data to it's vbo
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // create texture
     GLuint tex;
@@ -106,14 +149,6 @@ int main() {
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
 
-    // create the vertex and element buffers
-    GLuint vbo, ebo;
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
-
-    // create position's attrib pointer and buffer data to it's vbo
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     GLint posAttrib = glGetAttribLocation(program, "position");
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
@@ -127,29 +162,6 @@ int main() {
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-    // create the elements
-    GLuint elements[] = {
-
-            0, 1, 2,
-            0, 2, 3,
-
-            0, 1, 4,
-            1, 4, 5,
-
-            3, 2, 7,
-            2, 7, 6,
-
-            1, 2, 6,
-            1, 6, 5,
-
-            0, 3, 7,
-            0, 7, 4,
-
-            8, 9, 10,
-            8, 10, 11,
-    };
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
     // use opengl program
     glUseProgram(program);
@@ -174,9 +186,7 @@ int main() {
     GLint uniModelTrans = glGetUniformLocation(program, "model");
     GLint uniViewTrans = glGetUniformLocation(program, "view");
     GLint uniProjTrans = glGetUniformLocation(program, "proj");
-
-    // create model transformation matrix
-    glm::mat4 modelTrans;
+    GLint uniColor = glGetUniformLocation(program, "overrideColor");
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(uniViewTrans, uniProjTrans);
@@ -209,36 +219,39 @@ int main() {
 
 
         // Clear the entire buffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
         // draw Cube
-        modelTrans = glm::rotate(
-                modelTrans,
-                glm::radians(45.0f) * time,
-                glm::vec3(0.0f, 0.0f, 1.0f)
-        );
+        glm::mat4 modelTrans;
+        modelTrans = glm::rotate(modelTrans, glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
-        glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glEnable(GL_STENCIL_TEST);
 
-        // draw floor
+        // Draw floor
         glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
         glStencilMask(0xFF); // Write to stencil buffer
         glDepthMask(GL_FALSE); // Don't write to depth buffer
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void *) 30);
+        glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
 
-        // draw reflection
-        modelTrans = glm::scale(
-                glm::translate(modelTrans, glm::vec3(0, 0, 0)),
-                glm::vec3(1, 1, -1)
-        );
-        glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
+        glDrawArrays(GL_TRIANGLES, 36, 6);
+
+        // Draw cube reflection
         glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
         glStencilMask(0x00); // Don't write anything to stencil buffer
         glDepthMask(GL_TRUE); // Write to depth buffer
-        glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
+
+        modelTrans = glm::scale(
+                glm::translate(modelTrans, glm::vec3(0, 0, -1)),
+                glm::vec3(1, 1, -1)
+        );
+        glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
+        glUniform3f(uniColor, 0.3f, 0.3f, 0.3f);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glUniform3f(uniColor, 1.0f, 1.0f, 1.0f);
 
         glDisable(GL_STENCIL_TEST);
 
