@@ -16,6 +16,7 @@ namespace Camera {
 
     public:
         glm::vec3 pos;
+        glm::vec2 rot;
         GLint viewUniform, projUniform;
 
         Camera(GLint viewUniform, GLint projUniform);
