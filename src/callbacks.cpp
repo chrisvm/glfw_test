@@ -7,7 +7,7 @@
 namespace Callbacks {
     // info on keys
     std::map<int, int> keys;
-    glm::vec2 mouse;
+    GLFWwindow* _window;
 
     // The error callback will just print any errors that GLFW hits.
     void error_callback(int error, const char* description) {
@@ -28,16 +28,29 @@ namespace Callbacks {
         }
     }
 
-    void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-        mouse.x = xpos;
-        mouse.y = ypos;
-    }
-
     int getKey(int key) {
         return keys[key];
     }
 
     glm::vec2 getMouse() {
-        return mouse;
+        double xpos, ypos;
+        glfwGetCursorPos(_window, &xpos, &ypos);
+        return glm::vec2(xpos, ypos);
+    }
+
+    void resetMouse() {
+        int width, height;
+        glfwGetWindowSize(_window, &width, &height);
+        glfwSetCursorPos(_window, width / 2.0, height / 2.0);
+    }
+
+    void setWindow(GLFWwindow* win) {
+        _window = win;
+    }
+
+    glm::vec2 getWindowSize() {
+        int width, height;
+        glfwGetWindowSize(_window, &width, &height);
+        return glm::vec2(width, height);
     }
 }

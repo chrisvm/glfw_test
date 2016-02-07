@@ -17,11 +17,15 @@ namespace Callbacks {
     // The key callback generally handles any input, but we'll just use the ESC key in this example.
     void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-    // the mouse callback
-    void mouse_callback(GLFWwindow* window, double xpose, double ypos);
-
     int getKey(int key);
+
     glm::vec2 getMouse();
+
+    void resetMouse();
+
+    void setWindow(GLFWwindow* win);
+
+    glm::vec2 getWindowSize();
 }
 
 #endif //GLFW_TEST_CALLBACKS_H
