@@ -14,25 +14,28 @@ namespace Camera {
     }
 
     void Camera::configure() {
+
+        // set the projection transform
         glm::vec2 winSize = Callbacks::getWindowSize();
-        this->projTrans = glm::perspectiveFov(glm::radians(70.0f), winSize.x, winSize.y, 1.0f, 10.0f);
+        this->projTrans = glm::perspectiveFov(glm::radians(80.0f), winSize.x, winSize.y, 1.0f, 10.0f);
         glUniformMatrix4fv(this->projUniform, 1, GL_FALSE, glm::value_ptr(this->projTrans));
 
-        this->pos = glm::vec3(1.2f, 1.2f, 1.2f);
-        this->rot = glm::vec2(3.14f   , 0.0);
-        this->last_mouse = Callbacks::getMouse();
+        // init all vectors
+        pos = glm::vec3(4.0f, 0.0f, 1.0f);
+        rot = glm::vec2(0.0f, 0.0f);
+        last_mouse = Callbacks::getMouse();
         i = glm::vec3(1.0f, 0.0f, 0.0f);
         j = glm::vec3(0.0f, 1.0f, 0.0f);
         k = glm::vec3(0.0f, 0.0f, 1.0f);
     }
 
     void Camera::lookAt(glm::vec3 point) {
-        this->viewTrans = glm::lookAt(
-                this->pos,
+        viewTrans = glm::lookAt(
+                pos,
                 point,
                 glm::vec3(0.0f, 0.0f, 1.0f)
         );
-        glUniformMatrix4fv(this->viewUniform, 1, GL_FALSE, glm::value_ptr(this->viewTrans));
+        glUniformMatrix4fv(viewUniform, 1, GL_FALSE, glm::value_ptr(viewTrans));
     }
 
     void Camera::FPSCam(float deltaTime) {
@@ -41,7 +44,7 @@ namespace Camera {
 
         // add  mouse delta
         rot += mouseSpeed * deltaTime * - (mouse - last_mouse);
-        float halfPi = 3.14f / 2.0;
+        float halfPi = 3.14f / 2.0f;
 
         // clamp the vertical angle
         if (rot.y > halfPi) rot.y = halfPi;
@@ -76,7 +79,11 @@ namespace Camera {
             pos += -direction * deltaTime * camSpeed;
         }
 
-
+        viewTrans = glm::lookAt(
+                pos,
+                pos + direction,
+                up
+        );
         glUniformMatrix4fv(this->viewUniform, 1, GL_FALSE, glm::value_ptr(this->viewTrans));
     }
 

@@ -210,7 +210,6 @@ int main() {
 
         // draw Cube
         glm::mat4 modelTrans;
-        modelTrans = glm::rotate(modelTrans, glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -241,6 +240,7 @@ int main() {
 
         glDisable(GL_STENCIL_TEST);
 
+        // draw debug axis
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
         glfwPollEvents();
