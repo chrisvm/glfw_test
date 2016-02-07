@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "shader.h"
+#include "gl/GLShader.h"
 #include "callbacks.h"
 #include "camera.h"
 
@@ -127,13 +127,6 @@ int main() {
             0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
             -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
             -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-
-            -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-            1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-            1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-            -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
     };
 
     // create the vertex bufffer
@@ -187,7 +180,6 @@ int main() {
     GLint uniModelTrans = glGetUniformLocation(program, "model");
     GLint uniViewTrans = glGetUniformLocation(program, "view");
     GLint uniProjTrans = glGetUniformLocation(program, "proj");
-    GLint uniColor = glGetUniformLocation(program, "overrideColor");
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(uniViewTrans, uniProjTrans);
@@ -213,34 +205,9 @@ int main() {
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glEnable(GL_STENCIL_TEST);
-
-        // Draw floor
-        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glStencilMask(0xFF); // Write to stencil buffer
-        glDepthMask(GL_FALSE); // Don't write to depth buffer
-        glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
-
-        glDrawArrays(GL_TRIANGLES, 36, 6);
-
-        // Draw cube reflection
-        glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
-        glStencilMask(0x00); // Don't write anything to stencil buffer
-        glDepthMask(GL_TRUE); // Write to depth buffer
-
-        modelTrans = glm::scale(
-                glm::translate(modelTrans, glm::vec3(0, 0, -1)),
-                glm::vec3(1, 1, -1)
-        );
-        glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
-        glUniform3f(uniColor, 0.3f, 0.3f, 0.3f);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glUniform3f(uniColor, 1.0f, 1.0f, 1.0f);
-
-        glDisable(GL_STENCIL_TEST);
-
         // draw debug axis
+        // TODO: draw debug axis
+
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
         glfwPollEvents();

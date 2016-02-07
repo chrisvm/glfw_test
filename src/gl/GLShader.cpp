@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "GLShader.h"
 
 namespace GL {
     // Public

@@ -14,6 +14,7 @@ namespace Camera {
     class Camera {
         void configure();
         glm::mat4 viewTrans, projTrans;
+        float halfPI;
 
     public:
         glm::vec3 pos;

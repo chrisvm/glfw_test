@@ -22,8 +22,9 @@ namespace Camera {
 
         // init all vectors
         pos = glm::vec3(4.0f, 0.0f, 1.0f);
-        rot = glm::vec2(0.0f, 0.0f);
         last_mouse = Callbacks::getMouse();
+        halfPI = 3.14f / 2.0f;
+        rot = glm::vec2(-halfPI, 0.0f);
         i = glm::vec3(1.0f, 0.0f, 0.0f);
         j = glm::vec3(0.0f, 1.0f, 0.0f);
         k = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -43,13 +44,12 @@ namespace Camera {
         glm::vec2 mouse = Callbacks::getMouse();
 
         // add  mouse delta
-        rot += mouseSpeed * deltaTime * - (mouse - last_mouse);
-        float halfPi = 3.14f / 2.0f;
+        rot += - mouseSpeed * deltaTime * (mouse - last_mouse);
+        last_mouse = mouse;
 
         // clamp the vertical angle
-        if (rot.y > halfPi) rot.y = halfPi;
-        if (rot.y < -halfPi) rot.y = -halfPi;
-        last_mouse = mouse;
+        if (rot.y > halfPI) rot.y = halfPI;
+        if (rot.y < -halfPI) rot.y = -halfPI;
 
         glm::vec3 direction(
                 cos(rot.y) * sin(rot.x),
