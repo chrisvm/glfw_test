@@ -52,8 +52,9 @@ int main() {
     glfwMakeContextCurrent(window);
 
     // set keyboard callback
+    Callbacks::setWindow(window);
     glfwSetKeyCallback(window, Callbacks::key_callback);
-    glfwSetCursorPosCallback(window, Callbacks::mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // init glew with all extensions
     glewExperimental = GL_TRUE;
@@ -194,29 +195,14 @@ int main() {
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
     while (!glfwWindowShouldClose(window)) {
+
         // get time
         auto t_now = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+        float deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
         t_start = t_now;
 
-
-        // check key presses
-        if (Callbacks::getKey(GLFW_KEY_A)) {
-            camera->pos.y += -0.1f;
-        }
-        if (Callbacks::getKey(GLFW_KEY_D)) {
-            camera->pos.y +=  0.1f;
-        }
-        if (Callbacks::getKey(GLFW_KEY_W)) {
-            camera->pos.x += -0.1f;
-        }
-        if (Callbacks::getKey(GLFW_KEY_S)) {
-            camera->pos.x +=  0.1f;
-        }
-
         // camera view
-        camera->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-
+        camera->FPSCam(deltaTime);
 
         // Clear the entire buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -224,7 +210,6 @@ int main() {
 
         // draw Cube
         glm::mat4 modelTrans;
-        modelTrans = glm::rotate(modelTrans, glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
         glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -255,6 +240,7 @@ int main() {
 
         glDisable(GL_STENCIL_TEST);
 
+        // draw debug axis
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
         glfwPollEvents();
