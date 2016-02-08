@@ -4,10 +4,12 @@ project(glfw_test CXX)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(program_SOURCES
         "src/main.cpp"
-        "src/gl/GLShader.cpp"
         "src/util.cpp"
         "src/callbacks.cpp"
-        "src/camera.cpp" src/game_object/GameObject.cpp src/game_object/GameObject.h src/gl/GLProgram.cpp src/gl/GLProgram.h)
+        "src/camera.cpp"
+        "src/game_object/GameObject.cpp"
+        "src/gl/GLProgram.cpp"
+        "src/gl/GLShader.cpp" )
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
