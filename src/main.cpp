@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "gl/GLShader.h"
+#include "gl/GLProgram.h"
 #include "callbacks.h"
 #include "camera.h"
 
@@ -71,17 +72,23 @@ int main() {
     glBindVertexArray(vao);
 
     // create program
-    program = glCreateProgram();
+    GL::Program program;
 
     // attach and create shaders
-    GL::Shader vs = GL::Shader(GL_FRAGMENT_SHADER, "assets/shaders/fragment/standard.frag");
-    GL::Shader fs = GL::Shader(GL_VERTEX_SHADER, "assets/shaders/vertex/standard.vert");
-    vs.attachTo(program);
-    fs.attachTo(program);
+    GL::Shader *vs = new GL::Shader(GL_FRAGMENT_SHADER, "assets/shaders/fragment/standard.frag");
+    GL::Shader *fs = new GL::Shader(GL_VERTEX_SHADER, "assets/shaders/vertex/standard.vert");
+    program.attachShader(vs);
+    program.attachShader(fs);
     printf("Shader compilation was successful\n");
 
-    // link the program
-    glLinkProgram(program);
+    // link and use the program
+    program.link();
+    program.use();
+
+    // describe vertex
+    program.setVertexAttrib("position", 3, GL_FLOAT, 8, 0);
+    program.setVertexAttrib("color", 3, GL_FLOAT, 8, 3);
+    program.setVertexAttrib("texcoord", 2, GL_FLOAT, 8, 6);
 
     // load vertex data
     // composition: posx, posy, posz, rcolor, gcolor, bcolor, txcoordx, txcoordy
@@ -133,34 +140,15 @@ int main() {
     GLuint vbo;
     glGenBuffers(1, &vbo);
 
-    // create position's attrib pointer and buffer data to it's vbo
+    // buffer data to vbo
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // create texture
+    // create texture and load to gpu
     GLuint tex;
     glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-
-
-    GLint posAttrib = glGetAttribLocation(program, "position");
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-    glEnableVertexAttribArray(posAttrib);
-
-    GLint colorAttrib = glGetAttribLocation(program, "color");
-    glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(colorAttrib);
-
-    GLint texAttrib = glGetAttribLocation(program, "texcoord");
-    glEnableVertexAttribArray(texAttrib);
-    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-
-
-    // use opengl program
-    glUseProgram(program);
-
-    // get texture and load to gpu
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -177,9 +165,9 @@ int main() {
     }
 
     // get model transform uniform
-    GLint uniModelTrans = glGetUniformLocation(program, "model");
-    GLint uniViewTrans = glGetUniformLocation(program, "view");
-    GLint uniProjTrans = glGetUniformLocation(program, "proj");
+    GLint uniModelTrans = program.uniformLocation("model");
+    GLint uniViewTrans = program.uniformLocation("view");
+    GLint uniProjTrans = program.uniformLocation("proj");
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(uniViewTrans, uniProjTrans);
