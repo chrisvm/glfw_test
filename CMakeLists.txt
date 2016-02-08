@@ -7,9 +7,9 @@ set(program_SOURCES
         "src/util.cpp"
         "src/callbacks.cpp"
         "src/camera.cpp"
-        "src/game_object/GameObject.cpp"
+        "src/game_object/RenderObject.cpp"
         "src/gl/GLProgram.cpp"
-        "src/gl/GLShader.cpp" )
+        "src/gl/GLShader.cpp" src/game_object/CubeObject.cpp src/game_object/CubeObject.h)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
