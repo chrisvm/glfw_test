@@ -82,7 +82,7 @@ int main() {
     program.link();
     program.use();
 
-    // create cube
+    // create cubes
     CubeObject cube1(&program), cube2(&program);
     cube1.move(glm::vec3(0.0f, 2.0f, 0.0f));
     cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
@@ -91,12 +91,11 @@ int main() {
     cube1.addTexture("assets/images/normals/crystalite_color.jpg");
     cube2.addTexture("assets/images/normals/crystalite_bump.jpg");
 
-    // get view proj transform uniform
-    GLint uniViewTrans = program.uniformLocation("view");
-    GLint uniProjTrans = program.uniformLocation("proj");
-
     // create camera
-    Camera::Camera * camera = new Camera::Camera(uniViewTrans, uniProjTrans);
+    Camera::Camera * camera = new Camera::Camera(
+            program.uniformLocation("view"),
+            program.uniformLocation("proj")
+    );
 
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
