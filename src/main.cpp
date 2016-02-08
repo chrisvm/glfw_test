@@ -83,30 +83,15 @@ int main() {
     program.use();
 
     // create cube
-    CubeObject cube(&program);
+    CubeObject cube1(&program), cube2(&program);
+    cube1.move(glm::vec3(0.0f, 2.0f, 0.0f));
+    cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
 
     // create texture and load to gpu
-    GLuint tex;
-    glActiveTexture(GL_TEXTURE0);
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    cube1.addTexture("assets/images/normals/crystalite_color.jpg");
+    cube2.addTexture("assets/images/normals/crystalite_bump.jpg");
 
-    char const * textPath = "assets/images/normals/crystalite_color.jpg";
-    Util::SOILImage* img = Util::loadImage(textPath);
-    if (img == NULL) {
-        printf("Error loading texture \"%s\"\n", textPath);
-    } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img->width, img->height, 0, GL_RGB, GL_UNSIGNED_BYTE, img->image);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        img->free();
-    }
-
-    // get model transform uniform
-    GLint uniModelTrans = program.uniformLocation("model");
+    // get view proj transform uniform
     GLint uniViewTrans = program.uniformLocation("view");
     GLint uniProjTrans = program.uniformLocation("proj");
 
@@ -128,11 +113,9 @@ int main() {
         // Clear the entire buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        // draw Cube
-        glm::mat4 modelTrans;
-        glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // render cube
+        cube1.render();
+        cube2.render();
 
         // draw debug axis
         // TODO: draw debug axis
