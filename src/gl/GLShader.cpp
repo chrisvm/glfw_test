@@ -4,6 +4,7 @@ namespace GL {
     // Public
     Shader::Shader(GLenum type, char const * location) {
         _handle = glCreateShader(type);
+        _location = std::string(location);
 
         GLchar* src = Util::fileToBuffer(location);
         glShaderSource(_handle, 1, (const GLchar**)&src, NULL);
@@ -52,4 +53,7 @@ namespace GL {
         delete[] strInfoLog;
     }
     // END Private
+    std::string Shader::location() {
+        return _location;
+    }
 }

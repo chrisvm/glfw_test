@@ -8,11 +8,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "gl/GLShader.h"
+#include "gl/GLProgram.h"
 #include "callbacks.h"
+#include "game_object/CubeObject.h"
 #include "camera.h"
 
-// globals
-GLuint program, vao;
+
+
 int main() {
     // print header info
     fputs("Starting GLFW3 test\n", stdout);
@@ -66,123 +68,34 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    // generate vertex arrays
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
     // create program
-    program = glCreateProgram();
+    GL::Program program;
 
     // attach and create shaders
-    GL::Shader vs = GL::Shader(GL_FRAGMENT_SHADER, "assets/shaders/fragment/standard.frag");
-    GL::Shader fs = GL::Shader(GL_VERTEX_SHADER, "assets/shaders/vertex/standard.vert");
-    vs.attachTo(program);
-    fs.attachTo(program);
+    GL::Shader *vs = new GL::Shader(GL_FRAGMENT_SHADER, "assets/shaders/fragment/standard.frag");
+    GL::Shader *fs = new GL::Shader(GL_VERTEX_SHADER, "assets/shaders/vertex/standard.vert");
+    program.attachShader(vs);
+    program.attachShader(fs);
     printf("Shader compilation was successful\n");
 
-    // link the program
-    glLinkProgram(program);
+    // link and use the program
+    program.link();
+    program.use();
 
-    // load vertex data
-    // composition: posx, posy, posz, rcolor, gcolor, bcolor, txcoordx, txcoordy
-    GLfloat vertices[] = {
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+    // create cubes
+    CubeObject cube1(&program), cube2(&program);
+    cube1.move(glm::vec3(0.0f, 2.0f, 0.0f));
+    cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
 
-            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-
-            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-
-            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-    };
-
-    // create the vertex bufffer
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-
-    // create position's attrib pointer and buffer data to it's vbo
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // create texture
-    GLuint tex;
-    glActiveTexture(GL_TEXTURE0);
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-
-
-    GLint posAttrib = glGetAttribLocation(program, "position");
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-    glEnableVertexAttribArray(posAttrib);
-
-    GLint colorAttrib = glGetAttribLocation(program, "color");
-    glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(colorAttrib);
-
-    GLint texAttrib = glGetAttribLocation(program, "texcoord");
-    glEnableVertexAttribArray(texAttrib);
-    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-
-
-    // use opengl program
-    glUseProgram(program);
-
-    // get texture and load to gpu
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    char const * textPath = "assets/images/normals/crystalite_color.jpg";
-    Util::SOILImage* img = Util::loadImage(textPath);
-    if (img == NULL) {
-        printf("Error loading texture \"%s\"\n", textPath);
-    } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img->width, img->height, 0, GL_RGB, GL_UNSIGNED_BYTE, img->image);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        img->free();
-    }
-
-    // get model transform uniform
-    GLint uniModelTrans = glGetUniformLocation(program, "model");
-    GLint uniViewTrans = glGetUniformLocation(program, "view");
-    GLint uniProjTrans = glGetUniformLocation(program, "proj");
+    // create texture and load to gpu
+    cube1.addTexture("assets/images/normals/crystalite_color.jpg");
+    cube2.addTexture("assets/images/normals/crystalite_bump.jpg");
 
     // create camera
-    Camera::Camera * camera = new Camera::Camera(uniViewTrans, uniProjTrans);
+    Camera::Camera * camera = new Camera::Camera(
+            program.uniformLocation("view"),
+            program.uniformLocation("proj")
+    );
 
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
@@ -199,11 +112,9 @@ int main() {
         // Clear the entire buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        // draw Cube
-        glm::mat4 modelTrans;
-        glUniformMatrix4fv(uniModelTrans, 1, GL_FALSE, glm::value_ptr(modelTrans));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // render cube
+        cube1.render();
+        cube2.render();
 
         // draw debug axis
         // TODO: draw debug axis
