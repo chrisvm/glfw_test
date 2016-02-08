@@ -8,18 +8,27 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "callbacks.h"
 
 namespace Camera {
     class Camera {
         void configure();
         glm::mat4 viewTrans, projTrans;
+        float halfPI;
 
     public:
         glm::vec3 pos;
+        glm::vec2 rot;
+        glm::vec2 last_mouse;
+        glm::vec3 i, j, k;
+
         GLint viewUniform, projUniform;
+        float camSpeed;
+        float mouseSpeed;
 
         Camera(GLint viewUniform, GLint projUniform);
         void lookAt(glm::vec3 point);
+        void FPSCam(float deltaTime);
         void update();
     };
 }

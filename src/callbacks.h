@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <map>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 namespace Callbacks {
 
@@ -17,6 +18,14 @@ namespace Callbacks {
     void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
     int getKey(int key);
+
+    glm::vec2 getMouse();
+
+    void resetMouse();
+
+    void setWindow(GLFWwindow* win);
+
+    glm::vec2 getWindowSize();
 }
 
 #endif //GLFW_TEST_CALLBACKS_H
