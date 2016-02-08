@@ -47,7 +47,7 @@ namespace GL {
         stride = stride * typeSize;
         index = index * typeSize;
         glEnableVertexAttribArray(attrib);
-        glVertexAttribPointer(attrib, size, format, GL_FALSE, stride, (void*) (long)index);
+        glVertexAttribPointer(attrib, size, format, GL_FALSE, stride, (void*)(long) index);
     }
 
     GLuint Program::getTypeSize(GLenum type) {
