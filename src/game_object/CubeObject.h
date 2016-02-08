@@ -4,10 +4,13 @@
 
 #ifndef GLFW_TEST_CUBEOBJECT_H
 #define GLFW_TEST_CUBEOBJECT_H
+#include "RenderObject.h"
 
-
-class CubeObject {
-
+class CubeObject : RenderObject {
+public:
+    CubeObject(GL::Program *program);
+    virtual void configureProgram(GL::Program *program);
+    virtual void bufferVertexData();
 };
 
 
