@@ -19,6 +19,7 @@ protected:
     glm::mat4 _trans;
     GLuint _vao, _vbo, _texture, _tunit;
     GL::Program *_program;
+    void showGLError(std::string errorName);
 
 public:
     static unsigned int _textureUnits;
