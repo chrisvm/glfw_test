@@ -25,8 +25,8 @@ void CubeObject::configureProgram(GL::Program *program) {
 
 void CubeObject::bufferVertexData() {
     // bind vertex and buffer
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBindVertexArray(_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     showGLError("Bind Vertex Buffer and Array");
 
     // buffer cube vertex data
