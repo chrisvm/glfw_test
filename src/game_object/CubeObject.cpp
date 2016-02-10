@@ -7,6 +7,7 @@
 CubeObject::CubeObject(GL::Program *program) {
     // buffer cube data
     bufferVertexData();
+    bufferElementData();
 
     // configure program
     configureProgram(program);
@@ -35,9 +36,7 @@ void CubeObject::bufferVertexData() {
             -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
             0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
             0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
             -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
 
             -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
             0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
@@ -86,6 +85,11 @@ void CubeObject::render() {
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     showGLError("bind texture buffer");
 
+    if (_usingElements) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+        showGLError("Binding element buffer");
+    }
+
     glActiveTexture(GL_TEXTURE0 + _tunit);
     showGLError("Set Active Texture");
 
@@ -104,6 +108,29 @@ void CubeObject::render() {
     showGLError("Uniform sampler");
 
     // draw cube
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    showGLError("Drawing arrays");
+    if (_usingElements) {
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void*) 0);
+        showGLError("Rendering elements");
+    } else {
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        showGLError("Drawing arrays");
+    }
+}
+
+void CubeObject::bufferElementData() {
+    RenderObject::bufferElementData();
+    // set element buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+
+    // create vector with elements
+    GLushort elements[] = {
+            0, 1, 2,
+            2, 3, 0,
+
+            4, 5, 6,
+            7, 8, 9
+    };
+    // buffer element data
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements) * sizeof(unsigned short), &elements, GL_STATIC_DRAW);
+    showGLError("Buffering elements");
 }

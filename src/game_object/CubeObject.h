@@ -11,6 +11,7 @@ public:
     CubeObject(GL::Program *program);
     virtual void configureProgram(GL::Program *program);
     virtual void bufferVertexData();
+    virtual void bufferElementData();
     virtual void render();
 };
 

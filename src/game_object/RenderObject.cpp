@@ -75,5 +75,5 @@ void RenderObject::useElements() {
 }
 
 void RenderObject::bufferElementData() {
-
+    useElements();
 }
