@@ -16,6 +16,7 @@ RenderObject::RenderObject() {
     showGLError("Generating vertex buffer");
 
     _program = NULL;
+    _usingElements = false;
 }
 
 void RenderObject::addTexture(std::string path) {
@@ -62,4 +63,17 @@ void RenderObject::move(glm::vec3 delta) {
 void RenderObject::showGLError(std::string errorName) {
     GLuint error = glGetError();
     if (error) printf("GLError - %s - %i\n", errorName.c_str(), error);
+}
+
+void RenderObject::useElements() {
+    // return if already using elements
+    if (_usingElements) return;
+
+    // create element buffer
+    glGenBuffers(1, &_ebo);
+    _usingElements = true;
+}
+
+void RenderObject::bufferElementData() {
+
 }

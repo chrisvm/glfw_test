@@ -17,8 +17,9 @@
 class RenderObject {
 protected:
     glm::mat4 _trans;
-    GLuint _vao, _vbo, _texture, _tunit;
+    GLuint _vao, _vbo, _ebo, _texture, _tunit;
     GL::Program *_program;
+    bool _usingElements;
     void showGLError(std::string errorName);
 
 public:
@@ -27,8 +28,10 @@ public:
     RenderObject();
     void addTexture(std::string path);
     void move(glm::vec3 delta);
+    void useElements();
 
     virtual void bufferVertexData() =0;
+    virtual void bufferElementData();
     virtual void configureProgram(GL::Program *program) =0;
     virtual void render() =0;
 };
