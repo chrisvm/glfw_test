@@ -52,11 +52,13 @@ namespace GL {
 
     GLuint Program::getTypeSize(GLenum type) {
         if (type == GL_FLOAT)
-            return sizeof(float);
+            return sizeof(GLfloat);
         if (type == GL_INT)
-            return sizeof(int);
+            return sizeof(GLint);
         if (type == GL_DOUBLE)
-            return sizeof(double);
-        return sizeof(int);
+            return sizeof(GLdouble);
+        if (type == GL_UNSIGNED_SHORT)
+            return sizeof(GLushort);
+        return sizeof(GLint);
     }
 }
