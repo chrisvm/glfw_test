@@ -1,6 +1,7 @@
 #define BUFFER_OFFSET(i) ((void*)(i))
 #include <stdio.h>
 #include <cmath>
+#include <string>
 #include <thread>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -9,15 +10,15 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "gl/GLShader.h"
 #include "gl/GLProgram.h"
-#include "callbacks.h"
 #include "game_object/CubeObject.h"
+#include "callbacks.h"
 #include "camera.h"
-
+#include "config.h"
 
 
 int main() {
     // print header info
-    fputs("Starting GLFW3 test\n", stdout);
+    printf("Starting GLFW3\n");
 
     // init glfw, check if fail
     if (!glfwInit()) {
@@ -27,45 +28,17 @@ int main() {
     // set error callback
     glfwSetErrorCallback(Callbacks::error_callback);
 
-    // Set up OpenGL options.
-    // Use OpenGL verion 3.3,
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // GLFW_OPENGL_FORWARD_COMPAT specifies whether the OpenGL context should be forward-compatible,
-    // i.e. one where all functionality deprecated in the requested version of OpenGL is removed.
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    // Indicate we only want the newest core profile, rather than using backwards compatible
-    // and deprecated features.
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    // Make the window resize-able.
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    // set context and config
+    Config::setGLFWConfig();
 
     // create our window
     int wWidth = 800, wHeight = 600;
-    GLFWwindow* window = glfwCreateWindow(wWidth, wHeight, "GLFW Test", NULL, NULL);
+    GLFWwindow* window = Config::createWindow("GLFW Test", wWidth, wHeight);
 
-    // window failed to be created
-    if (!window) {
-        // exit with error
-        Util::err_exit("Failed to create GLFW window.", true);
-    }
+    // set up context
+    Config::setGLContext();
 
-    // use this window as the default context
-    glfwMakeContextCurrent(window);
-
-    // set keyboard callback
-    Callbacks::setWindow(window);
-    glfwSetKeyCallback(window, Callbacks::key_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    // init glew with all extensions
-    glewExperimental = GL_TRUE;
-    glewInit();
-    printf("Inited GLEW\n");
-
-    // print header
-    Util::printHeader();
-    glEnable(GL_DEPTH_TEST);
+    // set clear color
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     // create program
