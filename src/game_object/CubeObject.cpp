@@ -33,47 +33,45 @@ void CubeObject::bufferVertexData() {
     // buffer cube vertex data
     // composition: posx, posy, posz, rcolor, gcolor, bcolor, txcoordx, txcoordy
     GLfloat vertices[] = {
+            // front face
             -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
             0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
             -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
 
+            // back face
             -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
             0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
             -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
 
+            // left face
             -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
             -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
             -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
 
+            // right face
             0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
             0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
             0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
 
+            // bottom face
             -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
             0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
             -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
 
+            // top face
             -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
             -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
     };
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    _vertices = new std::vector<GLfloat>(vertices, vertices + sizeof(vertices) / sizeof(GLfloat));
+
+    glBufferData(GL_ARRAY_BUFFER, _vertices->size() * sizeof(GLfloat), &(*_vertices)[0], GL_STATIC_DRAW);
     showGLError("Buffering vertex data");
 }
 
@@ -109,7 +107,7 @@ void CubeObject::render() {
 
     // draw cube
     if (_usingElements) {
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void*) 0);
+        glDrawElements(GL_TRIANGLES, (GLsizei)_elements->size(), GL_UNSIGNED_SHORT, (void*) 0);
         showGLError("Rendering elements");
     } else {
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -119,18 +117,33 @@ void CubeObject::render() {
 
 void CubeObject::bufferElementData() {
     RenderObject::bufferElementData();
+
     // set element buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 
     // create vector with elements
     GLushort elements[] = {
             0, 1, 2,
-            2, 3, 0,
+            1, 2, 3,
 
             4, 5, 6,
-            7, 8, 9
+            5, 6, 7,
+
+            8, 9, 10,
+            9, 10, 11,
+
+            12, 13, 14,
+            13, 14, 15,
+
+            16, 17, 18,
+            17, 18, 19,
+
+            20, 21, 22,
+            21, 22, 23
     };
+    _elements = new std::vector<GLushort>(elements, elements + sizeof(elements) / sizeof(GLushort));
+
     // buffer element data
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements) * sizeof(unsigned short), &elements, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _elements->size() * sizeof(unsigned short), &(*_elements)[0], GL_STATIC_DRAW);
     showGLError("Buffering elements");
 }

@@ -5,6 +5,7 @@
 #ifndef GLFW_TEST_CUBEOBJECT_H
 #define GLFW_TEST_CUBEOBJECT_H
 #include "RenderObject.h"
+#include <vector>
 
 class CubeObject : public RenderObject {
 public:

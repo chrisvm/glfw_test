@@ -12,6 +12,7 @@
 #include "../util.h"
 #include <list>
 #include <string>
+#include <vector>
 
 
 class RenderObject {
@@ -19,6 +20,9 @@ protected:
     glm::mat4 _trans;
     GLuint _vao, _vbo, _ebo, _texture, _tunit;
     GL::Program *_program;
+    std::vector<GLushort> * _elements;
+    std::vector<GLfloat> * _vertices;
+
     bool _usingElements;
     void showGLError(std::string errorName);
 
