@@ -9,7 +9,11 @@ set(program_SOURCES
         "src/camera.cpp"
         "src/game_object/RenderObject.cpp"
         "src/gl/GLProgram.cpp"
-        "src/gl/GLShader.cpp" src/game_object/CubeObject.cpp src/game_object/CubeObject.h)
+        "src/gl/GLShader.cpp"
+        "src/game_object/CubeObject.cpp"
+        "src/config.cpp")
+
+
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
