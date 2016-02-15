@@ -7,6 +7,15 @@
 unsigned int RenderObject::_textureUnits;
 
 RenderObject::RenderObject() {
+    _init();
+}
+
+RenderObject::RenderObject(Engine::Game* game) {
+    _game = game;
+    _init();
+}
+
+void RenderObject::_init() {
     // create vao
     glGenVertexArrays(1, &_vao);
     showGLError("Generating vertex array");
@@ -18,7 +27,6 @@ RenderObject::RenderObject() {
     _program = NULL;
     _usingElements = false;
 }
-
 void RenderObject::addTexture(std::string path) {
     // create tex
     glGenTextures(1, &_texture);
@@ -42,7 +50,8 @@ void RenderObject::addTexture(std::string path) {
 
 
     // get texture image
-    Util::SOILImage* img = Util::loadImage(path.c_str());
+    //Util::SOILImage* img = Util::loadImage(path.c_str());
+    Util::SOILImage* img = _game->loader()->getImage(path);
     if (img == NULL) {
         printf("Error loading texture \"%s\"\n", path.c_str());
     } else {

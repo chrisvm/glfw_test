@@ -8,6 +8,12 @@ namespace Engine {
         _loader = NULL;
     }
 
+    Game::~Game() {
+        if (_loader != NULL) {
+            delete _loader;
+        }
+    }
+
     void Game::setAssetLocation(std::string location) {
         _assetLoc = location;
         if (_loader != NULL) {

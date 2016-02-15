@@ -4,7 +4,8 @@
 
 #include "CubeObject.h"
 
-CubeObject::CubeObject(GL::Program *program) {
+CubeObject::CubeObject(GL::Program *program, Engine::Game* game): RenderObject(game) {
+
     // buffer cube data
     bufferVertexData();
     bufferElementData();

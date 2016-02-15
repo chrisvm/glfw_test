@@ -14,6 +14,7 @@ namespace Engine {
 
     public:
         Game();
+        ~Game();
         void init();
         void setAssetLocation(std::string location);
         AssetLoader* loader();

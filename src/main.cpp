@@ -62,15 +62,15 @@ int main() {
     program.use();
 
     // create cubes
-    CubeObject cube1(&program), cube2(&program), cube3(&program);
+    CubeObject cube1(&program, game), cube2(&program, game), cube3(&program, game);
     cube1.move(glm::vec3(0.0f,  2.0f, 0.0f));
     cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
     cube3.move(glm::vec3(0.0f,  0.0f, 0.0f));
 
     // create texture and load to gpu
-    cube1.addTexture("assets/images/normals/crystalite_color.jpg");
-    cube2.addTexture("assets/images/normals/crystalite_bump.jpg");
-    cube3.addTexture("assets/images/normals/crystalite_normal.jpg");
+    cube1.addTexture("normals/crystalite_color.jpg");
+    cube2.addTexture("normals/crystalite_bump.jpg");
+    cube3.addTexture("normals/crystalite_normal.jpg");
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(

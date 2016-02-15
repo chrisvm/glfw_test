@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 #include "../gl/GLProgram.h"
+#include "../engine/Game.h"
 #include "../util.h"
 #include <list>
 #include <string>
@@ -16,12 +17,15 @@
 
 
 class RenderObject {
+    void _init();
+
 protected:
     glm::mat4 _trans;
     GLuint _vao, _vbo, _ebo, _texture, _tunit;
     GL::Program *_program;
     std::vector<GLushort> * _elements;
     std::vector<GLfloat> * _vertices;
+    Engine::Game* _game;
 
     bool _usingElements;
     void showGLError(std::string errorName);
@@ -30,6 +34,7 @@ public:
     static unsigned int _textureUnits;
 
     RenderObject();
+    RenderObject(Engine::Game* game);
     void addTexture(std::string path);
     void move(glm::vec3 delta);
     void useElements();
