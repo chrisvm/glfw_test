@@ -13,7 +13,8 @@ set(program_SOURCES
         "src/game_object/CubeObject.cpp"
         "src/config.cpp"
         "src/engine/Game.cpp"
-        "src/engine/AssetLoader.cpp")
+        "src/engine/AssetLoader.cpp"
+        "src/engine/Tree.cpp")
 
 
 
