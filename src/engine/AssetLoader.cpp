@@ -22,10 +22,10 @@ namespace Engine {
         while (dir.has_next) {
             tinydir_file file;
             tinydir_readfile(&dir, &file);
-            if (file.name == "images") {
+            if (strcmp(file.name, "images") == 0) {
                 // load images
                 printf("AssetLoader:: Loading images in %s\n", file.name);
-            } else if (file.name == "shaders") {
+            } else if (strcmp(file.name, "shaders") == 0) {
                 // load shaders
                 printf("AssetLoader:: Loading shaders in %s\n", file.name);
             }
