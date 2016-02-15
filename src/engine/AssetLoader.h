@@ -4,18 +4,18 @@
 
 #ifndef GLFW_TEST_ASSETLOADER_H
 #define GLFW_TEST_ASSETLOADER_H
-#include <string>
 #include <map>
-#include <thread>
-#include <cstring>
+#include <string>
 #include <regex>
 #include <queue>
+#include <thread>
+#include <cstring>
 #include "tinydir.h"
 #include "Tree.h"
 #include "../util.h"
 #include "../gl/GLProgram.h"
 #include "../gl/GLShader.h"
-
+#include "loaders.h"
 
 namespace Engine {
     class AssetLoader {
