@@ -11,6 +11,7 @@
 #include "gl/GLShader.h"
 #include "gl/GLProgram.h"
 #include "game_object/CubeObject.h"
+#include "engine/Game.h"
 #include "callbacks.h"
 #include "camera.h"
 #include "config.h"
