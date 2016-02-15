@@ -6,11 +6,16 @@
 #define GLFW_TEST_ASSETLOADER_H
 #include <string>
 #include <map>
+#include <thread>
+#include <cstring>
 #include "tinydir.h"
+#include "../util.h"
+
 
 namespace Engine {
     class AssetLoader {
         std::string _location;
+        std::map<std::string, Util::SOILImage>* _images;
         void processLocation();
 
     public:
