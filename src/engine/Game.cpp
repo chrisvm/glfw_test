@@ -5,12 +5,12 @@
 #include "Game.h"
 namespace Engine {
     Game::Game() {
-
+        _loader = NULL;
     }
 
     void Game::setAssetLocation(std::string location) {
         _assetLoc = location;
-        if (!_loader == NULL) {
+        if (_loader != NULL) {
             _loader->setLocation(_assetLoc);
         }
     }
