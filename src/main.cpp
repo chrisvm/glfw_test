@@ -47,22 +47,12 @@ int main() {
     game->init();
     game->setAssetLocation("assets");
 
-    // create program
-    GL::Program program;
-
-    // attach and create shaders
-    GL::Shader *vs = new GL::Shader(GL_FRAGMENT_SHADER, "assets/shaders/fragment/standard.frag");
-    GL::Shader *fs = new GL::Shader(GL_VERTEX_SHADER, "assets/shaders/vertex/standard.vert");
-    program.attachShader(vs);
-    program.attachShader(fs);
-    printf("Shader compilation was successful\n");
-
-    // link and use the program
-    program.link();
-    program.use();
+    // get standard program
+    GL::Program* program = game->loader()->getProgram("standard");
+    program->use();
 
     // create cubes
-    CubeObject cube1(&program, game), cube2(&program, game), cube3(&program, game);
+    CubeObject cube1(program, game), cube2(program, game), cube3(program, game);
     cube1.move(glm::vec3(0.0f,  2.0f, 0.0f));
     cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
     cube3.move(glm::vec3(0.0f,  0.0f, 0.0f));
@@ -74,8 +64,8 @@ int main() {
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(
-            program.uniformLocation("view"),
-            program.uniformLocation("proj")
+            program->uniformLocation("view"),
+            program->uniformLocation("proj")
     );
 
     // render loop

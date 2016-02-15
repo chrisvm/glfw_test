@@ -13,15 +13,20 @@
 #include "tinydir.h"
 #include "Tree.h"
 #include "../util.h"
+#include "../gl/GLProgram.h"
+#include "../gl/GLShader.h"
+
 
 namespace Engine {
     class AssetLoader {
         std::string _location;
         std::map<std::string, Util::SOILImage*> *_images;
+        std::map<std::string, GL::Program*> *_programs;
         Tree* _tree;
 
         void processLocation();
-        void createTree();
+        void createCaches();
+        void clear();
 
     public:
         AssetLoader();
@@ -29,6 +34,7 @@ namespace Engine {
 
         void setLocation(std::string loc);
         Util::SOILImage* getImage(std::string key);
+        GL::Program* getProgram(std::string key);
     };
 }
 
