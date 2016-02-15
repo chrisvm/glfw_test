@@ -58,9 +58,9 @@ int main() {
 
     // create cubes
     CubeObject cube1(&program), cube2(&program), cube3(&program);
-    cube1.move(glm::vec3(0.0f, 2.0f, 0.0f));
+    cube1.move(glm::vec3(0.0f,  2.0f, 0.0f));
     cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
-    cube3.move(glm::vec3(0.0f, 0.0f, 0.0f));
+    cube3.move(glm::vec3(0.0f,  0.0f, 0.0f));
 
     // create texture and load to gpu
     cube1.addTexture("assets/images/normals/crystalite_color.jpg");
