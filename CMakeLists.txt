@@ -11,7 +11,9 @@ set(program_SOURCES
         "src/gl/GLProgram.cpp"
         "src/gl/GLShader.cpp"
         "src/game_object/CubeObject.cpp"
-        "src/config.cpp")
+        "src/config.cpp"
+        "src/engine/Game.cpp"
+        "src/engine/AssetLoader.cpp")
 
 
 
