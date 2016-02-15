@@ -42,6 +42,11 @@ int main() {
     // set clear color
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+    // create engine instance
+    Engine::Game* game = new Engine::Game();
+    game->init();
+    game->setAssetLocation("assets");
+
     // create program
     GL::Program program;
 
