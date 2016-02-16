@@ -14,8 +14,10 @@
 #include "../gl/GLShader.h"
 
 namespace Engine {
-    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs);
-    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs);
+    class Game;
+
+    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs, Game* parent);
+    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs, Game* parent);
 }
 
 #endif //GLFW_TEST_LOADERS_H

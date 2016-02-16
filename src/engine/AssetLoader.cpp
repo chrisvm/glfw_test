@@ -3,11 +3,20 @@
 namespace Engine {
 
     AssetLoader::AssetLoader() {
+        init();
+    }
+
+    AssetLoader::AssetLoader(Game* game) {
+        init();
+        _game = game;
+    }
+
+    void AssetLoader::init() {
         _images = NULL;
         _programs = NULL;
         _tree = NULL;
+        _game = NULL;
     }
-
     void AssetLoader::clear() {
         // delete images
         if (_images != NULL) {
@@ -66,10 +75,10 @@ namespace Engine {
             // if images
             if (child->name == "images" && child->is_dir) {
                 // load images in other thread
-                imgThread = new std::thread(loadImages, _tree, index, _images);
+                imgThread = new std::thread(loadImages, _tree, index, _images, _game);
             } else if (child->name == "shaders" && child->is_dir) {
                 // load shader programs
-                loadShaders(_tree, index, _programs);
+                loadShaders(_tree, index, _programs, _game);
             }
         }
 

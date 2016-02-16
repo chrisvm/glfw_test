@@ -18,18 +18,23 @@
 #include "loaders.h"
 
 namespace Engine {
+    class Game;
+
     class AssetLoader {
         std::string _location;
         std::map<std::string, Util::SOILImage*> *_images;
         std::map<std::string, GL::Program*> *_programs;
         Tree* _tree;
+        Game* _game;
 
         void processLocation();
         void createCaches();
         void clear();
+        void init();
 
     public:
         AssetLoader();
+        AssetLoader(Game* game);
         ~AssetLoader();
 
         void setLocation(std::string loc);

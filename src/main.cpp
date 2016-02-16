@@ -12,6 +12,7 @@
 #include "gl/GLProgram.h"
 #include "game_object/CubeObject.h"
 #include "engine/Game.h"
+#include "engine/Lightning.h"
 #include "callbacks.h"
 #include "camera.h"
 #include "config.h"
@@ -68,6 +69,9 @@ int main() {
             program->uniformLocation("proj")
     );
 
+    // create light
+    Engine::Lightning *light = new Engine::Lightning(program);
+
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
     while (!glfwWindowShouldClose(window)) {
@@ -82,6 +86,9 @@ int main() {
 
         // Clear the entire buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // set lights
+        light->update();
 
         // render cube
         cube1.render();

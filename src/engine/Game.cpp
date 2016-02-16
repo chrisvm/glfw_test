@@ -24,7 +24,7 @@ namespace Engine {
     void Game::init() {
         // init asset loader
         if (_loader == NULL) {
-            _loader = new Engine::AssetLoader();
+            _loader = new AssetLoader(this);
             if (_assetLoc != "") {
                 _loader->setLocation(_assetLoc);
             }

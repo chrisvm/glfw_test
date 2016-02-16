@@ -13,5 +13,5 @@ uniform DirectionalLight dirLight;
 uniform sampler2D sampler;
 
 void main(void) {
-    outColor = texture(sampler, Texcoord) * vec4(Color, 1.0);
+    outColor = texture(sampler, Texcoord) * vec4(Color, 1.0) * vec4(dirLight.color, 1.0f) * dirLight.ambientIntensity;
 }

@@ -6,7 +6,7 @@
 
 namespace Engine {
 
-    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs) {
+    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs, Game* parent) {
         NodePtr _root = tree->getNode(root);
         printf("image loading from \"%s\"\n", _root->name.c_str());
 
@@ -51,7 +51,7 @@ namespace Engine {
         }
     }
 
-    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs) {
+    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs, Game* parent) {
         NodePtr rootNode = tree->getNode(root);
         auto children = tree->getChildren(root);
 
