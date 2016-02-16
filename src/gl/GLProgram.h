@@ -9,8 +9,8 @@
 #include <list>
 #include "GLShader.h"
 
-
 namespace GL {
+
     struct ShaderNode {
         std::string name;
         Shader *shader;
@@ -20,9 +20,11 @@ namespace GL {
         GLuint _program;
         std::list<ShaderNode> _shaders;
         GLuint getTypeSize(GLenum type);
+        void init();
 
     public:
         Program();
+
         void attachShader(Shader * shader);
         void attachShader(std::string shaderName, Shader* shader);
         void link();

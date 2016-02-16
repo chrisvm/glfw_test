@@ -6,6 +6,7 @@
 #define GLFW_TEST_GAME_H
 #include <string>
 #include "AssetLoader.h"
+#include "../gl/GLProgram.h"
 
 namespace Engine {
     class Game {
@@ -14,6 +15,7 @@ namespace Engine {
 
     public:
         Game();
+        ~Game();
         void init();
         void setAssetLocation(std::string location);
         AssetLoader* loader();

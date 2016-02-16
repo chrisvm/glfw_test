@@ -6,6 +6,10 @@
 
 namespace GL {
     Program::Program() {
+        init();
+    }
+
+    void Program::init() {
         _program = glCreateProgram();
     }
 

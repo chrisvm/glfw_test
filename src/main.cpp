@@ -11,6 +11,8 @@
 #include "gl/GLShader.h"
 #include "gl/GLProgram.h"
 #include "game_object/CubeObject.h"
+#include "engine/Game.h"
+#include "engine/Lightning.h"
 #include "callbacks.h"
 #include "camera.h"
 #include "config.h"
@@ -41,36 +43,34 @@ int main() {
     // set clear color
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    // create program
-    GL::Program program;
+    // create engine instance
+    Engine::Game* game = new Engine::Game();
+    game->init();
+    game->setAssetLocation("assets");
 
-    // attach and create shaders
-    GL::Shader *vs = new GL::Shader(GL_FRAGMENT_SHADER, "assets/shaders/fragment/standard.frag");
-    GL::Shader *fs = new GL::Shader(GL_VERTEX_SHADER, "assets/shaders/vertex/standard.vert");
-    program.attachShader(vs);
-    program.attachShader(fs);
-    printf("Shader compilation was successful\n");
-
-    // link and use the program
-    program.link();
-    program.use();
+    // get standard program
+    GL::Program* program = game->loader()->getProgram("standard");
+    program->use();
 
     // create cubes
-    CubeObject cube1(&program), cube2(&program), cube3(&program);
-    cube1.move(glm::vec3(0.0f, 2.0f, 0.0f));
+    CubeObject cube1(program, game), cube2(program, game), cube3(program, game);
+    cube1.move(glm::vec3(0.0f,  2.0f, 0.0f));
     cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
-    cube3.move(glm::vec3(0.0f, 0.0f, 0.0f));
+    cube3.move(glm::vec3(0.0f,  0.0f, 0.0f));
 
     // create texture and load to gpu
-    cube1.addTexture("assets/images/normals/crystalite_color.jpg");
-    cube2.addTexture("assets/images/normals/crystalite_bump.jpg");
-    cube3.addTexture("assets/images/normals/crystalite_normal.jpg");
+    cube1.addTexture("normals/crystalite_color.jpg");
+    cube2.addTexture("normals/crystalite_bump.jpg");
+    cube3.addTexture("normals/crystalite_normal.jpg");
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(
-            program.uniformLocation("view"),
-            program.uniformLocation("proj")
+            program->uniformLocation("view"),
+            program->uniformLocation("proj")
     );
+
+    // create light
+    Engine::Lightning *light = new Engine::Lightning(program);
 
     // render loop
     auto t_start = std::chrono::high_resolution_clock::now();
@@ -86,6 +86,9 @@ int main() {
 
         // Clear the entire buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // set lights
+        light->update();
 
         // render cube
         cube1.render();

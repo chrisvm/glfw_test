@@ -13,7 +13,10 @@ set(program_SOURCES
         "src/game_object/CubeObject.cpp"
         "src/config.cpp"
         "src/engine/Game.cpp"
-        "src/engine/AssetLoader.cpp")
+        "src/engine/AssetLoader.cpp"
+        "src/engine/Tree.cpp"
+        "src/engine/loaders.cpp"
+        "src/engine/Lightning.cpp")
 
 
 
@@ -35,10 +38,12 @@ include_directories("/usr/local/Cellar/glfw3/3.1.2/include")
 include_directories("/usr/local/Cellar/glew/1.13.0/include")
 include_directories("/usr/local/Cellar/glm/0.9.7.1/include")
 include_directories("/usr/local/Cellar/boost/1.60.0_1/include")
+include_directories("/usr/local/Cellar/assimp/3.1.1/include")
 
 link_directories("/usr/local/Cellar/glew/1.13.0/lib")
 link_directories("/usr/local/Cellar/glfw3/3.1.2/lib")
 link_directories("/usr/local/Cellar/boost/1.60.0_1/lib")
+link_directories("/usr/local/Cellar/assimp/3.1.1/lib")
 link_directories("/opt/local/lib")
 
 # find opengl framework

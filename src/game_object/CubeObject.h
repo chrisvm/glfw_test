@@ -7,9 +7,14 @@
 #include "RenderObject.h"
 #include <vector>
 
+namespace Engine {
+    class Game;
+}
+
 class CubeObject : public RenderObject {
+
 public:
-    CubeObject(GL::Program *program);
+    CubeObject(GL::Program *program, Engine::Game* game);
     virtual void configureProgram(GL::Program *program);
     virtual void bufferVertexData();
     virtual void bufferElementData();
