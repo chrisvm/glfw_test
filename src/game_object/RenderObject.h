@@ -37,6 +37,7 @@ public:
     RenderObject(Engine::Game* game);
     void addTexture(std::string path);
     void move(glm::vec3 delta);
+    void scale(glm::vec3 scale);
     void useElements();
 
     virtual void bufferVertexData() =0;

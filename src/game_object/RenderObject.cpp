@@ -27,6 +27,7 @@ void RenderObject::_init() {
     _program = NULL;
     _usingElements = false;
 }
+
 void RenderObject::addTexture(std::string path) {
     // create tex
     glGenTextures(1, &_texture);
@@ -85,4 +86,8 @@ void RenderObject::useElements() {
 
 void RenderObject::bufferElementData() {
     useElements();
+}
+
+void RenderObject::scale(glm::vec3 scale) {
+    _trans = glm::scale(_trans, scale);
 }
