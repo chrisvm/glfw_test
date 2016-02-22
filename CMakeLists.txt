@@ -16,7 +16,9 @@ set(program_SOURCES
         "src/engine/AssetLoader.cpp"
         "src/engine/Tree.cpp"
         "src/engine/loaders.cpp"
-        "src/engine/Lightning.cpp")
+        "src/engine/Lightning.cpp"
+        "src/engine/ObjFile.cpp"
+        "src/game_object/MeshObject.cpp")
 
 
 

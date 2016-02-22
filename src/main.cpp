@@ -16,6 +16,7 @@
 #include "callbacks.h"
 #include "camera.h"
 #include "config.h"
+#include "game_object/MeshObject.h"
 
 
 int main() {
@@ -69,6 +70,12 @@ int main() {
             program->uniformLocation("proj")
     );
 
+    // create mesh cube
+    MeshObject cube4(game->loader()->getObjectFile("cube"), program, game);
+    cube4.addTexture("cube/cube_texture.png");
+    cube4.move(glm::vec3(0.0f,  -4.0f, 0.0f));
+    cube4.scale(glm::vec3(0.5f, 0.5f, 0.5f));
+
     // create light
     Engine::Lightning *light = new Engine::Lightning(program);
 
@@ -94,6 +101,7 @@ int main() {
         cube1.render();
         cube2.render();
         cube3.render();
+        cube4.render();
 
         // draw debug axis
         // TODO: draw debug axis
