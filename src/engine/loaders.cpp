@@ -6,7 +6,7 @@
 
 namespace Engine {
 
-    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs, Game* parent) {
+    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs) {
         NodePtr _root = tree->getNode(root);
         printf("image loading from \"%s\"\n", _root->name.c_str());
 
@@ -51,7 +51,7 @@ namespace Engine {
         }
     }
 
-    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs, Game* parent) {
+    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs) {
         NodePtr rootNode = tree->getNode(root);
         auto children = tree->getChildren(root);
 
@@ -99,6 +99,62 @@ namespace Engine {
                     (*_programs)[programKey] = tProg;
                 } else {
                     printf("Program \"%s\" was empty, ignoring\n", programKey.c_str());
+                }
+            }
+        }
+    }
+
+    void loadObjs(Tree* tree, int root, std::map<std::string, ObjFile*> *_objects) {
+        // get root node
+        NodePtr rootNode = tree->getNode(root);
+        printf("Opening dir \"%s\"\n", rootNode->name.c_str());
+
+        // file name regex
+        std::regex mtlReg("^[a-zA-Z_0-9]+\\.mtl$"),
+                objReg("^[a-zA-Z_0-9]+\\.obj$"),
+                rootPath(rootNode->path + "/");
+
+        // iterate tree
+        auto children = tree->getChildren(root);
+        for (auto it = children->begin(); it != children->end(); ++it) {
+            int current = (*it);
+            NodePtr currentNode = tree->getNode(current);
+
+            // if dir found, check
+            if (currentNode->is_dir) {
+                // remove asset path
+                std::string objectKey = (std::string)std::regex_replace(
+                        currentNode->path.c_str(), (std::basic_regex<char>)rootPath, "");
+
+                // get files inside dir
+                auto objectFiles = tree->getChildren(current);
+                printf("Scanning object \"%s\"\n", objectKey.c_str());
+                int foundObj = -1, foundMtl = -1;
+
+                // iterate all files inside dir looking for .obj files
+                for (auto oFiles = objectFiles->begin(); oFiles != objectFiles->end(); ++oFiles) {
+                    NodePtr oFile = tree->getNode(*oFiles);
+                    if (std::regex_match(oFile->name.c_str(), objReg)) {
+                        foundObj = (*oFiles);
+                    } else if (std::regex_match(oFile->name.c_str(), mtlReg)) {
+                        foundMtl = (*oFiles);
+                    }
+                }
+
+                // if found obj
+                if (foundObj != -1) {
+                    // create new obj
+                    ObjFile *objectFile = new ObjFile();
+                    objectFile->openObj(tree->getNode(foundObj)->path);
+
+                    // if mtl found, open
+                    if (foundMtl != -1) {
+                        objectFile->openMtl(tree->getNode(foundMtl)->path);
+                    }
+
+                    // add to objects cache
+                    printf("Added object \"%s\" to loader\n", objectKey.c_str());
+                    (*_objects)[objectKey] = objectFile;
                 }
             }
         }

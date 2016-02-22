@@ -19,11 +19,13 @@
 
 namespace Engine {
     class Game;
+    class ObjFile;
 
     class AssetLoader {
         std::string _location;
         std::map<std::string, Util::SOILImage*> *_images;
         std::map<std::string, GL::Program*> *_programs;
+        std::map<std::string, ObjFile*> *_objects;
         Tree* _tree;
         Game* _game;
 
@@ -40,6 +42,7 @@ namespace Engine {
         void setLocation(std::string loc);
         Util::SOILImage* getImage(std::string key);
         GL::Program* getProgram(std::string key);
+        ObjFile* getObjectFile(std::string key);
     };
 }
 

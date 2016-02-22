@@ -14,6 +14,7 @@ namespace Engine {
     void AssetLoader::init() {
         _images = NULL;
         _programs = NULL;
+        _objects = NULL;
         _tree = NULL;
         _game = NULL;
     }
@@ -33,7 +34,18 @@ namespace Engine {
 
         // delete shaders
         if (_programs != NULL) {
+            for (auto it = _programs->begin(); it != _programs->end(); ++it) {
+                delete (*it).second;
+            }
             delete _programs;
+        }
+
+        // delete objects
+        if (_objects != NULL) {
+            for (auto it = _objects->begin(); it != _objects->end(); ++it) {
+                delete (*it).second;
+            }
+            delete _objects;
         }
     }
 
@@ -61,10 +73,13 @@ namespace Engine {
 
         // create shaders cache
         _programs = new std::map<std::string, GL::Program*>();
+
+        // create objects cache
+        _objects = new std::map<std::string, ObjFile*>();
     }
 
     void AssetLoader::processLocation() {
-        std::thread* imgThread = NULL;
+        std::thread *imgThread = NULL, *objThread = NULL;
 
         // get first level
         auto firstLevel = _tree->getChildren(0);
@@ -75,16 +90,22 @@ namespace Engine {
             // if images
             if (child->name == "images" && child->is_dir) {
                 // load images in other thread
-                imgThread = new std::thread(loadImages, _tree, index, _images, _game);
+                imgThread = new std::thread(loadImages, _tree, index, _images);
+            } else if (child->name == "objects" && child->is_dir) {
+                // load objects in other thread
+                objThread = new std::thread(loadObjs, _tree, index, _objects);
             } else if (child->name == "shaders" && child->is_dir) {
                 // load shader programs
-                loadShaders(_tree, index, _programs, _game);
+                loadShaders(_tree, index, _programs);
             }
         }
 
-        // join img loading thread
+        // join img and object loading threads
         if (imgThread != NULL) {
             imgThread->join();
+        }
+        if (objThread != NULL) {
+            objThread->join();
         }
         delete imgThread;
     }
@@ -95,5 +116,9 @@ namespace Engine {
 
     GL::Program* AssetLoader::getProgram(std::string key) {
         return _programs->at(key);
+    }
+
+    ObjFile *AssetLoader::getObjectFile(std::string key) {
+        return _objects->at(key);
     }
 }

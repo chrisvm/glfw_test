@@ -12,12 +12,14 @@
 #include "../util.h"
 #include "../gl/GLProgram.h"
 #include "../gl/GLShader.h"
+#include "ObjFile.h"
 
 namespace Engine {
     class Game;
 
-    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs, Game* parent);
-    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs, Game* parent);
+    void loadImages(Tree* tree, int root, std::map<std::string, Util::SOILImage*>* imgs);
+    void loadShaders(Tree* tree, int root, std::map<std::string, GL::Program*> *_programs);
+    void loadObjs(Tree* tree, int root, std::map<std::string, ObjFile*> *_objects);
 }
 
 #endif //GLFW_TEST_LOADERS_H
