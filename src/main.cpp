@@ -11,12 +11,12 @@
 #include "gl/GLShader.h"
 #include "gl/GLProgram.h"
 #include "game_object/CubeObject.h"
-#include "engine/Game.h"
 #include "engine/Lightning.h"
 #include "callbacks.h"
 #include "camera.h"
 #include "config.h"
 #include "game_object/MeshObject.h"
+#include "engine/Game.h"
 
 
 int main() {
@@ -53,28 +53,18 @@ int main() {
     GL::Program* program = game->loader()->getProgram("standard");
     program->use();
 
-    // create cubes
-    CubeObject cube1(program, game), cube2(program, game), cube3(program, game);
-    cube1.move(glm::vec3(0.0f,  2.0f, 0.0f));
-    cube2.move(glm::vec3(0.0f, -2.0f, 0.0f));
-    cube3.move(glm::vec3(0.0f,  0.0f, 0.0f));
-
-    // create texture and load to gpu
-    cube1.addTexture("normals/crystalite_color.jpg");
-    cube2.addTexture("normals/crystalite_bump.jpg");
-    cube3.addTexture("normals/crystalite_normal.jpg");
 
     // create camera
     Camera::Camera * camera = new Camera::Camera(
             program->uniformLocation("view"),
-            program->uniformLocation("proj")
+            program->uniformLocation("proj"),
+            program->uniformLocation("EyeWorldPos")
     );
 
     // create mesh cube
-    MeshObject cube4(game->loader()->getObjectFile("cube"), program, game);
-    cube4.addTexture("cube/cube_texture.png");
-    cube4.move(glm::vec3(0.0f,  -4.0f, 0.0f));
-    cube4.scale(glm::vec3(0.5f, 0.5f, 0.5f));
+    MeshObject cube(game->loader()->getObjectFile("cube"), program, game);
+    cube.addTexture("cube/cube_texture.png");
+    cube.scale(0.5f);
 
     // create light
     Engine::Lightning *light = new Engine::Lightning(program);
@@ -98,13 +88,8 @@ int main() {
         light->update();
 
         // render cube
-        cube1.render();
-        cube2.render();
-        cube3.render();
-        cube4.render();
-
-        // draw debug axis
-        // TODO: draw debug axis
+        cube.rotate(deltaTime, glm::vec3(1.0f, 1.0f, 0));
+        cube.render();
 
         // Swap the buffers so that what we drew will appear on the screen.
         glfwSwapBuffers(window);
