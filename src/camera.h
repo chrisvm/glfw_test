@@ -22,11 +22,11 @@ namespace Camera {
         glm::vec2 last_mouse;
         glm::vec3 i, j, k;
 
-        GLint viewUniform, projUniform;
+        GLint viewUniform, projUniform, eyeUniform;
         float camSpeed;
         float mouseSpeed;
 
-        Camera(GLint viewUniform, GLint projUniform);
+        Camera(GLint viewUniform, GLint projUniform, GLint eyeUniform);
         void lookAt(glm::vec3 point);
         void FPSCam(float deltaTime);
         void update();

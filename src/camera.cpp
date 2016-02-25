@@ -4,9 +4,10 @@
 #include "camera.h"
 
 namespace Camera {
-    Camera::Camera(GLint viewUniform, GLint projUniform) {
+    Camera::Camera(GLint viewUniform, GLint projUniform, GLint eyeUniform) {
         this->viewUniform = viewUniform;
         this->projUniform = projUniform;
+        this->eyeUniform = eyeUniform;
         this->camSpeed = 2.0;
         this->mouseSpeed = 0.10;
 
@@ -85,6 +86,7 @@ namespace Camera {
                 up
         );
         glUniformMatrix4fv(this->viewUniform, 1, GL_FALSE, glm::value_ptr(this->viewTrans));
+        glUniform3f(this->eyeUniform, pos.x, pos.y, pos.z);
     }
 
     // TODO: fix this method
