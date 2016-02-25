@@ -51,7 +51,6 @@ void RenderObject::addTexture(std::string path) {
 
 
     // get texture image
-    //Util::SOILImage* img = Util::loadImage(path.c_str());
     Util::SOILImage* img = _game->loader()->getImage(path);
     if (img == NULL) {
         printf("Error loading texture \"%s\"\n", path.c_str());
@@ -90,4 +89,12 @@ void RenderObject::bufferElementData() {
 
 void RenderObject::scale(glm::vec3 scale) {
     _trans = glm::scale(_trans, scale);
+}
+
+void RenderObject::scale(float scale) {
+    _trans = glm::scale(_trans, glm::vec3(scale, scale, scale));
+}
+
+void RenderObject::rotate(float angle, glm::vec3 axis) {
+    _trans = glm::rotate(_trans, angle, axis);
 }
