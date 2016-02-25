@@ -14,9 +14,12 @@ namespace Engine {
     class Lightning {
         GL::Program *_program;
         void init();
-        GLint _uColor, _uAmbientIntensity;
-        glm::vec3 _color;
-        GLfloat _intensity;
+        GLint _uColor, _uAmbientIntensity, _uDiffuseIntensity, _uDirection;
+        GLint _uSpecularIntensity, _uSpecularPower;
+        glm::vec3 _color, _direction;
+        GLfloat _amb_intensity, _diff_intensity;
+        GLfloat _spec_intensity, _spec_power;
+        void showGLError(std::string errorName);
 
     public:
         Lightning();
